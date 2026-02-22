@@ -1,0 +1,51 @@
+patients:
+    id(PRIMARY KEY),
+    name, 
+    gender, (F OR M)
+    birth_date, (date)
+    blood_group, (enum b+,o+...)
+    height, (decimal 2 points)
+    weight,(decimal 2 points)
+    phone_number,(10 digits unique) --idx
+    email,
+    address,
+    city,
+    state
+
+Doctors:
+    id(PRIMARY KEY),
+    name,
+    speciality, --idx
+    qualification,
+    years_of_experience,(numeric)
+    phone_number,(10 digits unique)
+    email,
+    isactive(boolean)
+
+Appointments:
+    id(PRIMARY KEY),
+    patieent_id(FOREIGN KEY--many Appointments one patient) --idx
+    doctor_id(FOREIGN KEY--many Appointments one doctor) --idx
+    time,
+    date,(date) --idx
+    status(completed cancelled, scheduled)
+
+Prescriptions:
+    id(PRIMARY KEY),
+    appointment_id(FOREIGN KEY--one appointment one Prescription)
+    diagnosis
+
+Medicines:
+    id(PRIMARY KEY),
+    name,
+    manufacturer,
+    price,(decimal 2 points)
+    mfd,(date)
+    expiry_date,(date)
+
+prescribed_medicines:
+    id(PRIMARY KEY),
+    prescription_id(FOREIGN KEY --many medicines many prescriptions),
+    medicine_id(FOREIGN KEY --many prescirptions many medicines),
+    dosage (in ml)
+

@@ -1,0 +1,73 @@
+Users:
+    id(PRIMARY KEY),
+    name,
+    phone_number, (10 digit and unique)
+    email,
+    address,
+    city,
+    state
+
+one user many orders
+
+Restaurants:
+    id(PRIMARY KEY),
+    name,
+    phone_number, (10 digit and unique)
+    email,
+    address,
+    city,
+    state, 
+    type_of_restro,
+
+one restaurant many orders 
+one restaurant many menu_items
+
+menu_items:
+    id(PRIMARY KEY),
+    r_id(FOREIGN KEY --one restaurant many menu items), --idx
+    name
+    unit_price (decimal till point 2)
+    desc
+
+orders:
+    id(PRIMARY KEY), 
+    u_id(FOREIGN KEY --many orders one User)--idx
+    r_id(FOREIGN KEY --many orders one restaurant)--idx
+    agent_id(FOREIGN KEY --one agents  many orders)--idx
+    status (enum preparing,on the way , delivered,cancelled)
+    price(decimal till point 2)
+    date(date)
+    time
+    
+ratings //it can be null if not given , spoil the orders table 
+many orders one agent 
+one order many order_items
+
+
+
+order_items:
+    id(PRIMARY KEY)
+    order_id(FOREIGN KEY --one order many order_items)
+    menu_item_id(FOREIGN KEY --one item many orders)
+    quantity
+    total_price
+
+one menu_item many order
+
+delivery_agents:
+    id (PRIMARY KEY)
+    name 
+    city 
+    address
+    phone_number(10 digit and unique)
+    email
+    vehicle_type(enum car, bike , activa)
+    vehicle_number
+
+ratings:
+    id(PRIMARY KEY)
+    order_id(FOREIGN KEY one order one rating )
+    ratings (check 1-5)
+    reviews
+
+one rating one order
