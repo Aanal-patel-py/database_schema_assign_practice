@@ -1,7 +1,7 @@
 Users:
     id(PRIMARY KEY),
     name,
-    phone_number, (10 digit and unique)
+    phone_number, (10 digit and unique) -idx
     email,
     address,
     city,

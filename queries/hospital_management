@@ -1,0 +1,78 @@
+-- Database: hospital_management
+--create patients table
+CREATE TYPE gender_enum AS ENUM ('F','M');
+
+CREATE TYPE blood_group_enum AS ENUM 
+('A+','A-','B+','B-','O+','O-','AB+','AB-');
+
+CREATE TABLE patients (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    gender gender_enum NOT NULL,
+    birth_date DATE NOT NULL,
+    blood_group blood_group_enum NOT NULL,
+    height DECIMAL(5,2) NOT NULL CHECK (height > 0),
+    weight DECIMAL(5,2) NOT NULL CHECK (weight > 0),
+    phone_number CHAR(10) NOT NULL UNIQUE CHECK (phone_number ~ '^[0-9]{10}$'),
+    email VARCHAR(255) UNIQUE,
+    address VARCHAR(255),
+    city VARCHAR(255),
+    state VARCHAR(255)
+);
+
+CREATE TABLE doctors (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    speciality VARCHAR(255) NOT NULL,
+    qualification VARCHAR(255) NOT NULL,
+    years_of_experience INT NOT NULL CHECK (years_of_experience >= 0),
+    phone_number CHAR(10) NOT NULL UNIQUE CHECK (phone_number ~ '^[0-9]{10}$'),
+    email VARCHAR(255) UNIQUE,
+    isactive BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TYPE appointment_status_enum AS ENUM 
+('completed','cancelled','scheduled');
+
+CREATE TABLE appointments (
+    id SERIAL PRIMARY KEY,
+    patient_id INT References patients(id) on delete cascade on update cascade NOT NULL ,
+    doctor_id INT  References doctors(id) on delete cascade on update cascade NOT NULL,
+    appointment_time TIME NOT NULL,
+    appointment_date DATE NOT NULL,
+    status appointment_status_enum NOT NULL DEFAULT 'scheduled'
+
+);
+
+CREATE TABLE prescriptions (
+    id SERIAL PRIMARY KEY,
+    appointment_id INT references appointments(id) on delete cascade on update cascade NOT NULL UNIQUE,
+    diagnosis TEXT NOT NULL
+);
+
+CREATE TABLE medicines (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    manufacturer VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
+    mfd DATE NOT NULL,
+    expiry_date DATE NOT NULL,
+
+    CONSTRAINT chk_expiry_after_mfd
+        CHECK (expiry_date > mfd)
+);
+
+CREATE TABLE prescribed_medicines (
+    id SERIAL PRIMARY KEY,
+    prescription_id INT references prescriptions(id) on delete cascade on update cascade NOT NULL unique,
+    medicine_id INT references medicines(id) on delete cascade on update cascade NOT NULL unique,
+    dosage DECIMAL(6,2) NOT NULL CHECK (dosage > 0),
+
+    CONSTRAINT unique_prescription_medicine
+        UNIQUE (prescription_id, medicine_id)
+);
+
+CREATE INDEX patient_id_idx on appointments(patient_id);
+CREATE INDEX doctor_id_idx on appointments(doctor_id);
+CREATE INDEX speciality_idx on doctors(speciality);
+CREATE INDEX patient_number_idx on patients(phone_number);
